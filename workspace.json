@@ -1,6 +1,8 @@
 {
   "version": 2,
   "projects": {
-    "posts": "apps/posts"
+    "authentications": "apps/authentications",
+    "posts": "apps/posts",
+    "users": "apps/users"
   }
 }
