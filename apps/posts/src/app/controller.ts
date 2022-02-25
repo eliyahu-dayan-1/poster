@@ -1,4 +1,4 @@
-import * as postService from './service';
+import * as postService from './services/postService';
 
 export async function getPost(req, res) {
   const post = await postService.getById(req.params.id);

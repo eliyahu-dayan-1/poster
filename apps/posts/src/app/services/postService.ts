@@ -1,4 +1,4 @@
-import * as dbService from './services/db.service';
+import * as dbService from '../../services/db.service';
 import { ObjectId } from 'mongodb';
 
 const COLLECTION = 'posts';

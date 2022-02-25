@@ -2,7 +2,7 @@ import * as express from 'express';
 import {
   requireAuth,
   requireAdmin,
-} from './middlewares/requireAuth.middleware';
+} from '../middlewares/requireAuth.middleware';
 import {
   getPost,
   getPosts,

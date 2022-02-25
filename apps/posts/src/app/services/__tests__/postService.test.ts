@@ -1,4 +1,4 @@
-import { add } from '../service';
+import { add } from '../postService';
 
 describe('check add function', () => {
   test('basic check', async () => {
