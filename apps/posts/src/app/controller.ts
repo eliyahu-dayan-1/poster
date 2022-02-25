@@ -5,6 +5,11 @@ export async function getPost(req, res) {
   res.send(post);
 }
 
+export async function getPostsByUserId(req, res) {
+  const post = await postService.getByUserId(req.params.user_id);
+  res.send(post);
+}
+
 export async function getPosts(req, res) {
   const posts = await postService.query(req.query);
   res.send(posts);

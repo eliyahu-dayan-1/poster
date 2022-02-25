@@ -9,7 +9,6 @@ export async function query(filterBy = {}) {
   const collection = await dbService.getCollection(COLLECTION);
   try {
     const posts = await collection.find(criteria).toArray();
-    posts.forEach((post) => delete post.password);
 
     return posts;
   } catch (err) {
@@ -26,6 +25,18 @@ export async function getById(postId) {
     return post;
   } catch (err) {
     logger.error(`ERROR: while finding post ${postId}`);
+    throw err;
+  }
+}
+
+export async function getByUserId(userId) {
+  const collection = await dbService.getCollection(COLLECTION);
+  try {
+    const posts = await collection.find({ user: userId }).toArray();
+
+    return posts;
+  } catch (err) {
+    logger.error(`ERROR: while get post By User Id ${userId}`);
     throw err;
   }
 }
@@ -67,9 +78,9 @@ export async function add(post) {
 
 function _buildCriteria(filterBy) {
   const criteria: any = {};
-  if (filterBy.txt) {
-    criteria.postName = filterBy.txt;
-  }
+  // if (filterBy.txt) {
+  //   criteria.postName = filterBy.txt;
+  // }
   /* if (filterBy.minBalance) {
         criteria.balance = { $gte: +filterBy.minBalance }
     } */
