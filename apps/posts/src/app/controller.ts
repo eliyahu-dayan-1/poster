@@ -17,8 +17,9 @@ export async function deletePost(req, res) {
 
 export async function updatePost(req, res) {
   const post = req.body;
+  
   try {
-    await postService.update(post);
+    await postService.update(post, req.params.id);
     req.session.post = post;
     res.send(post);
   } catch (err) {

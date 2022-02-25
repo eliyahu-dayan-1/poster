@@ -1,5 +1,6 @@
 import * as dbService from '../../services/db.service';
 import { ObjectId } from 'mongodb';
+import * as logger from '../../services/logger.service';
 
 const COLLECTION = 'posts';
 
@@ -12,7 +13,7 @@ export async function query(filterBy = {}) {
 
     return posts;
   } catch (err) {
-    console.log('ERROR: cannot find posts');
+    logger.error('ERROR: cannot find posts');
     throw err;
   }
 }
@@ -21,28 +22,10 @@ export async function getById(postId) {
   const collection = await dbService.getCollection(COLLECTION);
   try {
     const post = await collection.findOne({ _id: new ObjectId(postId) });
-    delete post.password;
-
-    // post.givenReviews = await reviewService.query({ byUserId: ObjectId(post._id) })
-    // post.givenReviews = post.givenReviews.map(review => {
-    //     delete review.byUser
-    //     return review
-    // })
 
     return post;
   } catch (err) {
-    console.log(`ERROR: while finding post ${postId}`);
-    throw err;
-  }
-}
-
-export async function getByUsername(postName) {
-  const collection = await dbService.getCollection(COLLECTION);
-  try {
-    const post = await collection.findOne({ postName });
-    return post;
-  } catch (err) {
-    console.log(`ERROR: while finding post ${postName}`);
+    logger.error(`ERROR: while finding post ${postId}`);
     throw err;
   }
 }
@@ -52,20 +35,21 @@ export async function remove(postId) {
   try {
     await collection.deleteOne({ _id: new ObjectId(postId) });
   } catch (err) {
-    console.log(`ERROR: cannot remove post ${postId}`);
+    logger.error(`ERROR: cannot remove post ${postId}`);
     throw err;
   }
 }
 
-export async function update(post) {
+export async function update(post, id) {
   const collection = await dbService.getCollection(COLLECTION);
-  post._id = new ObjectId(post._id);
 
   try {
-    await collection.replaceOne({ _id: post._id }, { $set: post });
+    await collection.replaceOne({ _id: new ObjectId(id) }, { $set: post });
+
     return post;
   } catch (err) {
-    console.log(`ERROR: cannot update post ${post._id}`);
+    logger.error(`ERROR: cannot update post ${id}`);
+    logger.error(err);
     throw err;
   }
 }
@@ -76,7 +60,7 @@ export async function add(post) {
     await collection.insertOne(post);
     return post;
   } catch (err) {
-    console.log(`ERROR: cannot insert post`);
+    logger.error(`ERROR: cannot insert post`);
     throw err;
   }
 }
