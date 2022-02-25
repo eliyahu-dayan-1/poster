@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 
-const logsDir = './log.txt';
+const logsDir = './logs';
 if (!fs.existsSync(logsDir)) {
   fs.mkdirSync(logsDir);
 }
@@ -11,22 +11,22 @@ function getTime() {
   return now.toUTCString();
 }
 
-function doLog(line, level = 'Debug') {
+function doLog(line, level = 'Debug', shouldConsoleLogEither = false) {
   if (typeof line !== 'string') line = JSON.stringify(line);
-  line = `${getTime()} - ${level} - ${line}\n`;
-  console.log(line);
+  line = `[${getTime()}] - ${level} - ${line}\n`;
+  if (shouldConsoleLogEither) console.log(line);
   fs.appendFileSync('./logs/backend.log', line);
 }
 
-export function debug(line) {
-  doLog(line, 'Debug');
+export function debug(line, shouldConsoleLogEither = false) {
+  doLog(line, 'Debug', shouldConsoleLogEither);
 }
-export function info(line) {
-  doLog(line, 'Info');
+export function info(line, shouldConsoleLogEither = false) {
+  doLog(line, 'Info', shouldConsoleLogEither);
 }
-export function warn(line) {
-  doLog(line, 'Warn');
+export function warn(line, shouldConsoleLogEither = false) {
+  doLog(line, 'Warn', shouldConsoleLogEither);
 }
-export function error(line) {
-  doLog(line, 'Error');
+export function error(line, shouldConsoleLogEither = false) {
+  doLog(line, 'Error', shouldConsoleLogEither);
 }

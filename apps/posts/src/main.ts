@@ -2,7 +2,7 @@ import * as bodyParser from 'body-parser';
 import * as cookieParser from 'cookie-parser';
 import * as cors from 'cors';
 import * as express from 'express';
-import userRoutes from './routes';
+import postRoutes from './routes';
 
 const app = express();
 
@@ -19,8 +19,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.use('/api/user', userRoutes);
-
+app.use('/api/post', postRoutes);
 const server = app.listen(port, () => {
   console.log(`Listening at http://localhost:${port}/api`);
 });

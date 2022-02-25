@@ -3,14 +3,21 @@ import {
   requireAuth,
   requireAdmin,
 } from './middlewares/requireAuth.middleware';
-import { getUser, getUsers, deleteUser, updateUser } from './controller';
+import {
+  getPost,
+  getPosts,
+  deletePost,
+  updatePost,
+  addPost,
+} from './controller';
 
 // middleware that is specific to this router
-const router = express.Router() 
+const router = express.Router();
 
-router.get('/', getUsers);
-router.get('/:id', getUser);
-router.put('/:id', requireAuth, updateUser);
-router.delete('/:id', requireAuth, requireAdmin, deleteUser);
+router.get('/', getPosts);
+router.get('/:id', getPost);
+router.put('/:id', requireAuth, updatePost);
+router.post('/', requireAuth, addPost);
+router.delete('/:id', requireAuth, requireAdmin, deletePost);
 
 export default router;

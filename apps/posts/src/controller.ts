@@ -1,28 +1,35 @@
-import * as userService from './service';
-import * as logger from './services/logger.service';
+import * as postService from './service';
 
-export async function getUser(req, res) {
-  const user = await userService.getById(req.params.id);
-  res.send(user);
+export async function getPost(req, res) {
+  const post = await postService.getById(req.params.id);
+  res.send(post);
 }
 
-export async function getUsers(req, res) {
-  const users = await userService.query(req.query);
-  logger.debug(users);
-  res.send(users);
+export async function getPosts(req, res) {
+  const posts = await postService.query(req.query);
+  res.send(posts);
 }
 
-export async function deleteUser(req, res) {
-  await userService.remove(req.params.id);
+export async function deletePost(req, res) {
+  await postService.remove(req.params.id);
   res.end();
 }
 
-export async function updateUser(req, res) {
-  const user = req.body;
+export async function updatePost(req, res) {
+  const post = req.body;
   try {
-    await userService.update(user);
-    req.session.user = user;
-    res.send(user);
+    await postService.update(post);
+    req.session.post = post;
+    res.send(post);
+  } catch (err) {
+    res.status(500).send(err);
+  }
+}
+export async function addPost(req, res) {
+  const post = req.body;
+  try {
+    const addedPost = await postService.add(post);
+    res.send(addedPost);
   } catch (err) {
     res.status(500).send(err);
   }

@@ -1,82 +1,82 @@
 import * as dbService from './services/db.service';
 import { ObjectId } from 'mongodb';
 
-const COLLECTION = 'user';
+const COLLECTION = 'posts';
 
 export async function query(filterBy = {}) {
   const criteria = _buildCriteria(filterBy);
   const collection = await dbService.getCollection(COLLECTION);
   try {
-    const users = await collection.find(criteria).toArray();
-    users.forEach((user) => delete user.password);
+    const posts = await collection.find(criteria).toArray();
+    posts.forEach((post) => delete post.password);
 
-    return users;
+    return posts;
   } catch (err) {
-    console.log('ERROR: cannot find users');
+    console.log('ERROR: cannot find posts');
     throw err;
   }
 }
 
-export async function getById(userId) {
+export async function getById(postId) {
   const collection = await dbService.getCollection(COLLECTION);
   try {
-    const user = await collection.findOne({ _id: ObjectId(userId) });
-    delete user.password;
+    const post = await collection.findOne({ _id: new ObjectId(postId) });
+    delete post.password;
 
-    // user.givenReviews = await reviewService.query({ byUserId: ObjectId(user._id) })
-    // user.givenReviews = user.givenReviews.map(review => {
+    // post.givenReviews = await reviewService.query({ byUserId: ObjectId(post._id) })
+    // post.givenReviews = post.givenReviews.map(review => {
     //     delete review.byUser
     //     return review
     // })
 
-    return user;
+    return post;
   } catch (err) {
-    console.log(`ERROR: while finding user ${userId}`);
+    console.log(`ERROR: while finding post ${postId}`);
     throw err;
   }
 }
 
-export async function getByUsername(userName) {
+export async function getByUsername(postName) {
   const collection = await dbService.getCollection(COLLECTION);
   try {
-    const user = await collection.findOne({ userName });
-    return user;
+    const post = await collection.findOne({ postName });
+    return post;
   } catch (err) {
-    console.log(`ERROR: while finding user ${userName}`);
+    console.log(`ERROR: while finding post ${postName}`);
     throw err;
   }
 }
 
-export async function remove(userId) {
+export async function remove(postId) {
   const collection = await dbService.getCollection(COLLECTION);
   try {
-    await collection.deleteOne({ _id: ObjectId(userId) });
+    await collection.deleteOne({ _id: new ObjectId(postId) });
   } catch (err) {
-    console.log(`ERROR: cannot remove user ${userId}`);
+    console.log(`ERROR: cannot remove post ${postId}`);
     throw err;
   }
 }
 
-export async function update(user) {
+export async function update(post) {
   const collection = await dbService.getCollection(COLLECTION);
-  user._id = ObjectId(user._id);
+  post._id = new ObjectId(post._id);
 
   try {
-    await collection.replaceOne({ _id: user._id }, { $set: user });
-    return user;
+    await collection.replaceOne({ _id: post._id }, { $set: post });
+    return post;
   } catch (err) {
-    console.log(`ERROR: cannot update user ${user._id}`);
+    console.log(`ERROR: cannot update post ${post._id}`);
     throw err;
   }
 }
 
-export async function add(user) {
+export async function add(post) {
   const collection = await dbService.getCollection(COLLECTION);
   try {
-    await collection.insertOne(user);
-    return user;
+    await collection.insertOne(post);
+    return post;
   } catch (err) {
-    console.log(`ERROR: cannot insert user`);
+    console.log(`ERROR: cannot insert post`);
     throw err;
   }
 }
@@ -84,7 +84,7 @@ export async function add(user) {
 function _buildCriteria(filterBy) {
   const criteria: any = {};
   if (filterBy.txt) {
-    criteria.userName = filterBy.txt;
+    criteria.postName = filterBy.txt;
   }
   /* if (filterBy.minBalance) {
         criteria.balance = { $gte: +filterBy.minBalance }
