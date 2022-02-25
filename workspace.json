@@ -2,6 +2,8 @@
   "version": 2,
   "projects": {
     "authentications": "apps/authentications",
+    "db-service": "libs/db-service",
+    "logger-service": "libs/logger-service",
     "posts": "apps/posts",
     "users": "apps/users"
   }
