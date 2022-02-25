@@ -1,4 +1,6 @@
 module.exports = {
+  rootDir: '../',
+  testMatch: ['<rootDir>/src/**/__tests__/**/*.(spec|test).{js,jsx,ts,tsx}'],
   displayName: 'authentications',
   preset: '../../jest.preset.js',
   globals: {
