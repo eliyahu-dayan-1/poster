@@ -1,4 +1,4 @@
-import * as bodyParser from 'body-parser';
+import { json } from 'body-parser';
 import * as cookieParser from 'cookie-parser';
 import * as cors from 'cors';
 import * as express from 'express';
@@ -17,7 +17,7 @@ if (process.env.NODE_ENV === 'production') {
   };
   app.use(cors(corsOptions));
 }
-app.use(bodyParser.json());
+app.use(json());
 app.use(cookieParser());
 app.use('/api/post', postRoutes);
 const server = app.listen(port, () => {
