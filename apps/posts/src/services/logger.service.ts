@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 
-const logsDir = './logs';
+const logsDir = 'apps/posts/src/logs';
 if (!fs.existsSync(logsDir)) {
   fs.mkdirSync(logsDir);
 }
@@ -15,7 +15,7 @@ function doLog(line, level = 'Debug', shouldConsoleLogEither = false) {
   if (typeof line !== 'string') line = JSON.stringify(line);
   line = `[${getTime()}] - ${level} - ${line}\n`;
   if (shouldConsoleLogEither) console.log(line);
-  fs.appendFileSync('./logs/backend.log', line);
+  fs.appendFileSync(`${logsDir}/backend.log`, line);
 }
 
 export function debug(line, shouldConsoleLogEither = false) {
