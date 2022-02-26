@@ -71,7 +71,7 @@ class CollectionService {
     }
   };
 
-  update = async (post, id: string) => {
+  update = async (post: any, id: string) => {
     const collection = await dbService.getCollection(this.collectionName);
     if (collection) {
       try {
@@ -85,7 +85,7 @@ class CollectionService {
       }
     }
   };
-  add = async (post) => {
+  add = async (post: any) => {
     const collection = await dbService.getCollection(this.collectionName);
     if (collection) {
       try {
