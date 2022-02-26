@@ -2,6 +2,7 @@
     "jest.jestCommandLine": " npx nx run-many --target=test --all=true",
     "cSpell.words": [
         "Constractor",
-        "middlewares"
+        "middlewares",
+        "resave"
     ],
 }
