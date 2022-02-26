@@ -9,7 +9,9 @@
   },
   "private": true,
   "dependencies": {
+    "@types/jsonwebtoken": "^8.5.8",
     "express": "4.17.2",
+    "jsonwebtoken": "^8.5.1",
     "tslib": "^2.0.0"
   },
   "devDependencies": {
