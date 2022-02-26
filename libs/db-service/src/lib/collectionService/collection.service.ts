@@ -24,12 +24,11 @@ class CollectionService {
   collectionName: string;
   dbName: string;
   dbService: DbService;
-  query = async (filterBy = {}) => {
-    const criteria = this._buildCriteria(filterBy);
+  query = async (filterBy: { [key: string]: any } = {}) => {
     const collection = await this.dbService.getCollection(this.collectionName);
     if (collection) {
       try {
-        const posts = await collection.find(criteria).toArray();
+        const posts = await collection.find(filterBy).toArray();
 
         return posts;
       } catch (err) {
@@ -67,25 +66,25 @@ class CollectionService {
     }
   };
 
-  remove = async (postId: string) => {
+  remove = async (id: string) => {
     const collection = await this.dbService.getCollection(this.collectionName);
     if (collection) {
       try {
-        await collection.deleteOne({ _id: new ObjectId(postId) });
+        await collection.deleteOne({ _id: new ObjectId(id) });
       } catch (err) {
-        this.logger.error(`ERROR: cannot remove post ${postId}`);
+        this.logger.error(`ERROR: cannot remove post ${id}`);
         throw err;
       }
     }
   };
 
-  update = async (post: any, id: string) => {
+  update = async (data: any, id: string) => {
     const collection = await this.dbService.getCollection(this.collectionName);
     if (collection) {
       try {
-        await collection.replaceOne({ _id: new ObjectId(id) }, { $set: post });
+        await collection.replaceOne({ _id: new ObjectId(id) }, { $set: data });
 
-        return post;
+        return data;
       } catch (err) {
         this.logger.error(`ERROR: cannot update post ${id}`);
         this.logger.error(err);
@@ -93,28 +92,17 @@ class CollectionService {
       }
     }
   };
-  add = async (post: any) => {
+  add = async (data: any) => {
     const collection = await this.dbService.getCollection(this.collectionName);
     if (collection) {
       try {
-        await collection.insertOne(post);
-        return post;
+        await collection.insertOne(data);
+        return data;
       } catch (err) {
         this.logger.error(`ERROR: cannot insert post`);
         throw err;
       }
     }
-  };
-
-  _buildCriteria = (filterBy: any) => {
-    const criteria: any = {};
-    // if (filterBy.txt) {
-    //   criteria.postName = filterBy.txt;
-    // }
-    /* if (filterBy.minBalance) {
-        criteria.balance = { $gte: +filterBy.minBalance }
-    } */
-    return criteria;
   };
 }
 

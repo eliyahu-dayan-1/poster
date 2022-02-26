@@ -8,12 +8,12 @@ class PostController {
   };
 
   getPostsByUserId = async (req: Request, res: Response) => {
-    const post = await postCollection.getByUserId(req.params.user_id);
+    const post = await postCollection.query({ user: req.params.user_id });
     res.send(post);
   };
 
   getPosts = async (req: Request, res: Response) => {
-    const posts = await postCollection.query(req.query);
+    const posts = await postCollection.query();
     res.send(posts);
   };
 
