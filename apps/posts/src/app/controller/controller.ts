@@ -1,5 +1,6 @@
 import { postCollection } from '../services/collections-service';
 import { Request, Response } from 'express';
+import Post from '../interfaces/data-contracts/Post';
 
 class PostController {
   getPost = async (req: Request, res: Response) => {
@@ -23,7 +24,7 @@ class PostController {
   };
 
   updatePost = async (req: Request, res: Response) => {
-    const post = req.body;
+    const post: Post = req.body;
 
     try {
       await postCollection.update(post, req.params.id);
@@ -33,7 +34,7 @@ class PostController {
     }
   };
   addPost = async (req: Request, res: Response) => {
-    const post = req.body;
+    const post: Post = req.body;
     try {
       const addedPost = await postCollection.add(post);
       res.send(addedPost);

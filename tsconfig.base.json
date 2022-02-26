@@ -1,12 +1,12 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "esModuleInterop": true /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables `allowSyntheticDefaultImports` for type compatibility. */,
-    "noImplicitReturns": true /* Enable error reporting for codepaths that do not explicitly return in a function. */,
+    "esModuleInterop": true,
+    "noImplicitReturns": true,
     "noImplicitAny": true,
-    "forceConsistentCasingInFileNames": true /* Ensure that casing is correct in imports. */,
-    "strict": true /* Enable all strict type-checking options. */,
-    "strictFunctionTypes": true /* When assigning functions, check to ensure parameters and the return values are subtype-compatible. */,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "strictFunctionTypes": true,
     "rootDir": ".",
     "sourceMap": true,
     "declaration": false,
@@ -23,7 +23,7 @@
     "paths": {
       "@poster/db-service": ["libs/db-service/src/index.ts"],
       "@poster/express-api": ["libs/express-api/src/index.ts"],
-      "@poster/logger-service": ["libs/logger-service/src/index.ts"]
+      "@poster/logger-service": ["libs/logger-service/src/index.ts"],
     }
   },
   "exclude": ["node_modules", "tmp"]
