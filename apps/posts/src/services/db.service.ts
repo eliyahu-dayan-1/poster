@@ -1,18 +1,25 @@
-import { MongoClient } from 'mongodb';
+import { Db, MongoClient } from 'mongodb';
 import config from '../config';
-import * as logger from './logger.service'
+import { postLogger } from './logger.service';
+import { Collection } from 'mongodb';
 
 const dbName = 'poster_posts';
+let dbConn: Db | null = null;
 
-let dbConn = null;
+export async function getCollection(
+  collectionName: string
+): Promise<undefined | Collection> {
+  let collection: undefined | Collection;
 
-export async function getCollection(collectionName) {
   try {
     const db = await connect();
-    return db.collection(collectionName);
+    collection = await db.collection(collectionName);
   } catch (err) {
-    logger.error(err)
+    postLogger.error(err);
+    throw err;
   }
+
+  return collection;
 }
 
 async function connect() {

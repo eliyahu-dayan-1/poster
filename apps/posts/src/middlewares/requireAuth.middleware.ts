@@ -1,4 +1,10 @@
-export async function requireAuth(req, res, next) {
+import { Request, Response, NextFunction } from 'express';
+
+export async function requireAuth(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   //   console.log('middleware',req.session);
 
   // if (!req.session || !req.session.user) {
@@ -8,7 +14,11 @@ export async function requireAuth(req, res, next) {
   next();
 }
 
-export async function requireAdmin(req, res, next) {
+export async function requireAdmin(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   // const user = req.session.user;
   // if (!user.isAdmin) {
   //   res.status(403).end('Unauthorized Enough..');

@@ -1,26 +1,8 @@
-import { json } from 'body-parser';
-import * as cookieParser from 'cookie-parser';
-import * as cors from 'cors';
-import * as express from 'express';
-import postRoutes from './app/routes';
+import { BaseExpressAPI } from '@poster/express-api';
+import postRoutes from './app/router/routes';
 
-const app = express();
-
-// Express App Config //
-const port = process.env.port || 3333;
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static('public'));
-} else {
-  const corsOptions = {
-    origin: [`http://127.0.0.1:${port}`, `http://localhost:${port}`],
-    credentials: true,
-  };
-  app.use(cors(corsOptions));
-}
-app.use(json());
-app.use(cookieParser());
-app.use('/api/post', postRoutes);
-const server = app.listen(port, () => {
-  console.log(`Listening at http://localhost:${port}/api`);
+new BaseExpressAPI({
+  defaultPort: 3333,
+  apiUrl: '/api/post',
+  router: postRoutes,
 });
-server.on('error', console.error);

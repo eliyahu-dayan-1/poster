@@ -2,7 +2,7 @@ import * as express from 'express';
 import {
   requireAuth,
   requireAdmin,
-} from '../middlewares/requireAuth.middleware';
+} from '../../middlewares/requireAuth.middleware';
 import {
   getPost,
   getPosts,
@@ -10,9 +10,8 @@ import {
   updatePost,
   addPost,
   getPostsByUserId,
-} from './controller';
+} from '../controller/controller';
 
-// middleware that is specific to this router
 const router = express.Router();
 
 router.get('/', getPosts);

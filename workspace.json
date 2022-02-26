@@ -3,6 +3,7 @@
   "projects": {
     "authentications": "apps/authentications",
     "db-service": "libs/db-service",
+    "express-api": "libs/express-api",
     "logger-service": "libs/logger-service",
     "posts": "apps/posts",
     "users": "apps/users"
