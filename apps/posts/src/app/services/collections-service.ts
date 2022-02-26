@@ -6,11 +6,11 @@ const COLLECTION_NAME = 'posts';
 const DB_NAME = 'poster_posts';
 const dbURL = config.dbURL;
 
-const postCollectionService = new CollectionService({
+const postCollection = new CollectionService({
   collectionName: COLLECTION_NAME,
   dbName: DB_NAME,
   dbURL: dbURL,
   logger: postLogger,
 });
 
-export { postCollectionService };
+export { postCollection };
