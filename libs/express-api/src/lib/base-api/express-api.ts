@@ -2,10 +2,8 @@ import { Logger } from '@poster/logger-service';
 import { json } from 'body-parser';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import express from 'express';
 import session from 'express-session';
-
-
+import express from 'express';
 interface Constractor {
   defaultPort: number;
   apiUrl: string;
@@ -14,13 +12,14 @@ interface Constractor {
 }
 
 class BaseExpressAPI {
-  app = express();
+  app;
   constructor({
     defaultPort = 3000,
     apiUrl = '',
     router,
     logger = console,
   }: Constractor) {
+    this.app = express();
     // Express App Config //
     const port = process.env.port || defaultPort;
     if (process.env.NODE_ENV === 'production') {
@@ -35,15 +34,17 @@ class BaseExpressAPI {
 
     this.app.use(json());
     this.app.use(cookieParser());
-    this.app.use(session({
-      secret: 'test',
-      resave: false,
-      saveUninitialized: true,
-      cookie: {
+    this.app.use(
+      session({
+        secret: 'test',
+        resave: false,
+        saveUninitialized: true,
+        cookie: {
           secure: false, //set true later
-          maxAge: 60000
-      }
-  }));
+          maxAge: 60000,
+        },
+      })
+    );
     this.app.use(apiUrl, router);
     const server = this.app.listen(port, () => {
       logger.log(`Listening at http://localhost:${port}/api`);
