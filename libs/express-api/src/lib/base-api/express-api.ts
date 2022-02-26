@@ -34,17 +34,23 @@ class BaseExpressAPI {
 
     this.app.use(json());
     this.app.use(cookieParser());
+    const isProduction = this.app.get('env') === 'production';
     this.app.use(
       session({
         secret: 'test',
         resave: false,
         saveUninitialized: true,
         cookie: {
-          secure: false, //set true later
+          secure: isProduction ? true : false,
           maxAge: 60000,
         },
       })
     );
+
+    if (isProduction) {
+      this.app.set('trust proxy', 1); // trust first proxy
+    }
+
     this.app.use(apiUrl, router);
     const server = this.app.listen(port, () => {
       logger.log(`Listening at http://localhost:${port}/api`);
