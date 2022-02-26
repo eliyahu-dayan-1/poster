@@ -23,7 +23,7 @@
     "paths": {
       "@poster/db-service": ["libs/db-service/src/index.ts"],
       "@poster/express-api": ["libs/express-api/src/index.ts"],
-      "@poster/logger-service": ["libs/logger-service/src/index.ts"],
+      "@poster/logger-service": ["libs/logger-service/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
