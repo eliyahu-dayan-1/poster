@@ -1,3 +1,4 @@
+import { Logger } from '@poster/logger-service';
 import { json } from 'body-parser';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
@@ -9,7 +10,7 @@ interface Constractor {
   defaultPort: number;
   apiUrl: string;
   router: express.Router;
-  logger?: Console;
+  logger?: Console | Logger;
 }
 
 class BaseExpressAPI {

@@ -1,6 +1,8 @@
 import * as mongodb from 'mongodb';
 import * as fs from 'fs';
-class Logger {
+
+
+class Logger{
   logOutputDir;
   constructor(logOutputDir: string) {
     this.logOutputDir = logOutputDir;
