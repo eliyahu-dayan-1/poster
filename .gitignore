@@ -40,3 +40,5 @@ Thumbs.db
 
 #apps
 apps/**/src/logs/*.log
+apps/**/src/logs/*.log
+apps/**/src/config
