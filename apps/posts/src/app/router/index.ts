@@ -1,1 +1,1 @@
-export { default as routers } from './routes';
+export { router } from './router';

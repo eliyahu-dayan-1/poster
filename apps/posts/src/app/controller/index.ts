@@ -1,1 +1,1 @@
-export * as controller from './controller';
+export { PostController } from './controller';
