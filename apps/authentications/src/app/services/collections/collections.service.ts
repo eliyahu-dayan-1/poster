@@ -1,5 +1,5 @@
-import { authLogger } from './logger.service';
-import config from '../../config';
+import { authLogger } from '../logger/logger.service';
+import config from '../../../config';
 import { CollectionService } from '@poster/db-service';
 
 const BLACK_LIST_COLLECTION = 'black_list';
