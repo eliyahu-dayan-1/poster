@@ -1,9 +1,9 @@
 import { Logger } from '@poster/logger-service';
 import { json } from 'body-parser';
-import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import session from 'express-session';
 import express from 'express';
+import cookieSession from 'cookie-session';
+
 interface Constractor {
   defaultPort: number;
   apiUrl: string;
@@ -33,19 +33,14 @@ class BaseExpressAPI {
     }
 
     this.app.use(json());
-    this.app.use(cookieParser());
-    const isProduction = this.app.get('env') === 'production';
     this.app.use(
-      session({
-        secret: 'test',
-        resave: false,
-        saveUninitialized: true,
-        cookie: {
-          secure: isProduction ? true : false,
-          maxAge: 60000,
-        },
+      cookieSession({
+        name: 'session',
+        keys: ['key1', 'key2'],
+        maxAge: 60 * 1000,
       })
     );
+    const isProduction = this.app.get('env') === 'production';
 
     if (isProduction) {
       this.app.set('trust proxy', 1); // trust first proxy

@@ -1,13 +1,12 @@
 import * as mongodb from 'mongodb';
 import * as fs from 'fs';
 
-
-class Logger{
+class Logger {
   logOutputDir;
   constructor(logOutputDir: string) {
     this.logOutputDir = logOutputDir;
-    if (!fs.existsSync(this.logOutputDir)) {
-      fs.mkdirSync(this.logOutputDir);
+    if (!fs.existsSync(`${this.logOutputDir}/logs`)) {
+      fs.mkdirSync(`${this.logOutputDir}/logs`);
     }
   }
 
@@ -20,7 +19,7 @@ class Logger{
     if (typeof line !== 'string') line = JSON.stringify(line);
     line = `[${this.getTime()}] - ${level} - ${line}\n`;
     if (shouldConsoleLogEither) console.log(line);
-    fs.appendFileSync(`${this.logOutputDir}/backend.log`, line);
+    fs.appendFileSync(`${this.logOutputDir}/logs/backend.log`, line);
   }
 
   debug(line: any, shouldConsoleLogEither = false) {
