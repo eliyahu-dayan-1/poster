@@ -1,4 +1,4 @@
-import { postLogger } from '../../services/logger.service';
+import { postLogger } from './logger.service';
 import config from '../../config';
 import { CollectionService } from '@poster/db-service';
 

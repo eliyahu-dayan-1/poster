@@ -20,11 +20,11 @@ const blacklistCollection = new CollectionService({
   dbURL: dbURL,
   logger: authLogger,
 });
-const userCollection = new CollectionService({
+const usersCollection = new CollectionService({
   collectionName: USERS_COLLECTION,
   dbName: DB_NAME,
   dbURL: dbURL,
   logger: authLogger,
 });
 
-export { passwordCollection, blacklistCollection, userCollection };
+export { passwordCollection, blacklistCollection, usersCollection };

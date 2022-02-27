@@ -1,9 +1,10 @@
 import UserInformation from '../interfaces/data-contracts/UserInformation';
+import UsersCollectionStructure from '../interfaces/data-contracts/UserCollectionStructure';
 import {
   passwordCollection,
   blacklistCollection,
-  userCollection,
-} from './collections-service';
+  usersCollection as usersCollection,
+} from './collections.service';
 import bcrypt from 'bcryptjs';
 
 class AuthService {
@@ -17,18 +18,29 @@ class AuthService {
   };
   registerUser = async (userInformation: UserInformation) => {
     let registerUserRes;
-    console.log(userInformation);
-    if (userInformation.password) {
+
+    if (
+      userInformation.firstName &&
+      userInformation.lastName &&
+      userInformation.userName &&
+      userInformation.phone &&
+      userInformation.password
+    ) {
       const hashPassword = await bcrypt.hash(
         userInformation.password,
         this.saltRounds
       );
-      delete userInformation.password;
 
-      const addUserRes: any = await userCollection.add({
-        ...userInformation,
+      const addUserPayload: UsersCollectionStructure = {
+        firstName: userInformation.firstName,
+        lastName: userInformation.lastName,
+        userName: userInformation.userName,
+        phone: userInformation.phone,
+        password: userInformation.password,
         createdAt: Date.now(),
-      });
+      };
+
+      const addUserRes: any = await usersCollection.add({ addUserPayload });
 
       const addPasswordRes = this.addPassword({
         userId: addUserRes._id,
@@ -42,6 +54,7 @@ class AuthService {
       delete addUserRes.password;
       registerUserRes = addUserRes;
     }
+
     return registerUserRes;
   };
 }

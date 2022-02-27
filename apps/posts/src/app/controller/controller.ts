@@ -1,4 +1,4 @@
-import { postCollection } from '../services/collections-service';
+import { postCollection } from '../services/collections.service';
 import { Request, Response } from 'express';
 import Post from '../interfaces/data-contracts/Post';
 
