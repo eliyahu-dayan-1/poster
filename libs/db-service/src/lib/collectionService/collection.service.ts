@@ -38,29 +38,15 @@ class CollectionService {
     }
   };
 
-  getById = async (postId: string) => {
+  getById = async (id: string) => {
     const collection = await this.dbService.getCollection(this.collectionName);
     if (collection) {
       try {
-        const post = await collection.findOne({ _id: new ObjectId(postId) });
+        const post = await collection.findOne({ _id: new ObjectId(id) });
 
         return post;
       } catch (err) {
-        this.logger.error(`ERROR: while finding post ${postId}`);
-        throw err;
-      }
-    }
-  };
-
-  getByUserId = async (userId: string) => {
-    const collection = await this.dbService.getCollection(this.collectionName);
-    if (collection) {
-      try {
-        const posts = await collection.find({ user: userId }).toArray();
-
-        return posts;
-      } catch (err) {
-        this.logger.error(`ERROR: while get post By User Id ${userId}`);
+        this.logger.error(`ERROR: while finding post ${id}`);
         throw err;
       }
     }
