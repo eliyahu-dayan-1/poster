@@ -1,25 +1,8 @@
-import {
-  passwordCollection,
-  blacklistCollection,
-} from '../services/collections-service';
 import { Request, Response } from 'express';
-import jwt from 'jsonwebtoken';
-import { authLogger as logger } from '../services/logger.service';
-import authService from '../services/auth-service';
+import { authLogger as logger } from '../services/logger/logger.service';
+import authService from '../services/auth/auth.service';
 import UserInformation from '../interfaces/data-contracts/UserInformation';
-// Generate JWT
-// const userJwt = jwt.sign(
-//   {
-//     id: 'aaaa',
-//     email: 'ggggggg',
-//   },
-//   'asdf'
-// );
 
-// // Store it on session object
-// req.session = {
-//   jwt: userJwt,
-// };
 class AuthController {
   getSession = async (req: Request, res: Response) => {
     // console.log('getting session.........');
@@ -45,20 +28,30 @@ class AuthController {
 
   signup = async (req: Request, res: Response) => {
     try {
-      const { password, firstName, lastName, phone }: UserInformation =
-        req.body;
-      console.log(firstName + ', ' + password + ', ' + lastName);
-      const registerUserRes = await authService.registerUser({
+      const {
         password,
         firstName,
         lastName,
         phone,
+        userName,
+      }: UserInformation = req.body;
+      const registerUserRes = await authService.registerUser({
+        password,
+        firstName,
+        lastName,
+        userName,
+        phone,
       });
-      logger.debug(
-        `auth.route - new account created: ` + JSON.stringify(registerUserRes)
-      );
-      // const user = await authService.login(username, password);
-      // req.session.user = user;
+
+      if (registerUserRes.success && registerUserRes.response) {
+        const jwt = await authService.login({
+          userName: registerUserRes.response.userName,
+          hashPassword: registerUserRes.response.password,
+        });
+        delete registerUserRes.response.password;
+        req.session.jwt = jwt;
+      }
+
       res.json(registerUserRes);
     } catch (err) {
       logger.error('[SIGNUP] ' + err);

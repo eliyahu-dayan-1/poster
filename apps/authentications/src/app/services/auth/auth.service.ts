@@ -7,6 +7,7 @@ import {
 } from '../collections/collections.service';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { authLogger } from '../logger/logger.service';
 
 class AuthService {
   saltRounds = 10;
@@ -18,37 +19,43 @@ class AuthService {
     return addPasswordRes;
   };
 
-  getUserById = async (id: string) => {
-    return await usersCollection.getById(id);
+  getUserByUserName = async (userName: string) => {
+    return await usersCollection.query({ userName });
   };
 
-  logIn = async ({
+  login = async ({
     hashPassword,
-    userId,
+    userName,
   }: {
     hashPassword: string;
-    userId: string;
+    userName: string;
   }): Promise<{ jwt: string; success: boolean }> => {
     let isLoginSuccess = false;
     let userJwt = '';
 
-    const getUserRes = await this.getUserById(userId);
-    if (getUserRes) {
-      const isPasswordMatch = getUserRes.password === hashPassword;
-      const isUserNameMatch = getUserRes.userName === hashPassword;
+    const getUserByUserNameRes = await this.getUserByUserName(userName);
+    if (getUserByUserNameRes) {
+      const isPasswordMatch = getUserByUserNameRes.password === hashPassword;
+      const isUserNameMatch = getUserByUserNameRes.userName === hashPassword;
 
       const isUserCanLogin = isUserNameMatch && isPasswordMatch;
       if (isUserCanLogin) {
         isLoginSuccess = true;
         // Generate JWT
-        userJwt = jwt.sign(getUserRes, 'abcd');
+        userJwt = jwt.sign(getUserByUserNameRes, 'abcd');
       }
     }
 
     return { jwt: userJwt, success: isLoginSuccess };
   };
-  registerUser = async (userInformation: UserInformation) => {
+  registerUser = async (
+    userInformation: UserInformation
+  ): Promise<{
+    success: boolean;
+    response: UsersCollectionStructure | undefined;
+  }> => {
     let registerUserRes;
+    let isRegisterUserSuccess = false;
 
     const isAllFieldsFull =
       userInformation.firstName &&
@@ -58,11 +65,12 @@ class AuthService {
       userInformation.password;
 
     if (isAllFieldsFull) {
-      const user: UsersCollectionStructure = await usersCollection.query({
-        userName: userInformation.userName,
-      });
+      const user: Array<UsersCollectionStructure> | undefined =
+        await usersCollection.query({
+          userName: userInformation.userName,
+        });
       const userAlreadyExist = !!user;
-      if (userAlreadyExist) {
+      if (!userAlreadyExist) {
         const hashPassword = await bcrypt.hash(
           userInformation.password,
           this.saltRounds
@@ -77,14 +85,21 @@ class AuthService {
           createdAt: Date.now(),
         };
 
-        const addUserRes: any = await usersCollection.add(addUserPayload);
+        const addUserRes: UsersCollectionStructure = await usersCollection.add(
+          addUserPayload
+        );
 
-        delete addUserRes.password;
-        registerUserRes = addUserRes;
+        if (addUserRes) {
+          registerUserRes = addUserRes;
+          isRegisterUserSuccess = true;
+          authLogger.debug(
+            `auth.route - new account created: ` + userInformation.userName
+          );
+        }
       }
     }
 
-    return registerUserRes;
+    return { success: isRegisterUserSuccess, response: registerUserRes };
   };
 }
 
