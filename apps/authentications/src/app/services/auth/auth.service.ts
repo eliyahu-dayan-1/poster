@@ -48,6 +48,12 @@ class AuthService {
 
     return { jwt: userJwt, success: isLoginSuccess };
   };
+  hashingPassword = async (
+    password: string,
+    saltRounds = this.saltRounds
+  ): Promise<string> => {
+    return await bcrypt.hash(password, saltRounds);
+  };
   registerUser = async (
     userInformation: UserInformation
   ): Promise<{
@@ -71,10 +77,7 @@ class AuthService {
         });
       const userAlreadyExist = !!user;
       if (!userAlreadyExist) {
-        const hashPassword = await bcrypt.hash(
-          userInformation.password,
-          this.saltRounds
-        );
+        const hashPassword = this.hashingPassword(userInformation.password);
 
         const addUserPayload: UsersCollectionStructure = {
           firstName: userInformation.firstName,

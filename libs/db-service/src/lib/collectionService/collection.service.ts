@@ -1,6 +1,9 @@
 import { ObjectId } from 'mongodb';
 import { DbService } from '../dbService';
 import { Logger } from '@poster/logger-service';
+import BaseCollectionServiceRes from '../interfaces/message-contracts/BaseCollectionServiceRes';
+import { BaseError } from '../interfaces/data-contracts/BaseError';
+import { ERROR_CODES } from '../interfaces/data-contracts/ERROR_CODES_ENUM';
 
 interface Constractor {
   collectionName: string;
@@ -24,21 +27,35 @@ class CollectionService {
   collectionName: string;
   dbName: string;
   dbService: DbService;
-  query = async (filterBy: { [key: string]: any } = {}) => {
+  query = async (
+    filterBy: { [key: string]: any } = {}
+  ): Promise<BaseCollectionServiceRes> => {
     const collection = await this.dbService.getCollection(this.collectionName);
+    let isQuerySuccess = false;
+    let findRes: Array<any> = [];
+
     if (collection) {
       try {
-        const posts = await collection.find(filterBy).toArray();
-
-        return posts;
+        findRes = await collection.find(filterBy).toArray();
+        isQuerySuccess = true;
       } catch (err) {
         this.logger.error('ERROR: cannot find posts');
-        throw err;
+        isQuerySuccess = false;
       }
     }
+
+    return new BaseCollectionServiceRes({
+      success: isQuerySuccess,
+      response: findRes,
+      error: new BaseError({
+        ErrorMessage: '',
+        DisplayErrorMessage: '',
+        UniqueErrorCode: ERROR_CODES.OperationCompletedSuccessfully,
+      }),
+    });
   };
 
-  getById = async (id: string) => {
+  getById = async (id: string): Promise<BaseCollectionServiceRes> => {
     const collection = await this.dbService.getCollection(this.collectionName);
     if (collection) {
       try {
@@ -52,7 +69,7 @@ class CollectionService {
     }
   };
 
-  remove = async (id: string) => {
+  remove = async (id: string): Promise<BaseCollectionServiceRes> => {
     const collection = await this.dbService.getCollection(this.collectionName);
     if (collection) {
       try {
@@ -64,7 +81,7 @@ class CollectionService {
     }
   };
 
-  update = async (data: any, id: string) => {
+  update = async (data: any, id: string): Promise<BaseCollectionServiceRes> => {
     const collection = await this.dbService.getCollection(this.collectionName);
     if (collection) {
       try {
@@ -78,7 +95,7 @@ class CollectionService {
       }
     }
   };
-  add = async (data: any) => {
+  add = async (data: any): Promise<BaseCollectionServiceRes> => {
     const collection = await this.dbService.getCollection(this.collectionName);
     if (collection) {
       try {

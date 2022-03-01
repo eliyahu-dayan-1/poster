@@ -15,12 +15,19 @@ class AuthController {
   };
 
   login = async (req: Request, res: Response) => {
-    const { username, password } = req.body;
-    try {
-      const user = await authService.login(username, password);
-      req.session.user = user;
+    const { userName, password } = req.body;
 
-      res.json(user);
+    try {
+      const hashPassword = await authService.hashingPassword(password);
+      const { jwt, success } = await authService.login({
+        userName,
+        hashPassword,
+      });
+      if (success) {
+        req.session = { jwt };
+      }
+
+      res.json();
     } catch (err) {
       res.status(401).send(err);
     }
@@ -48,8 +55,10 @@ class AuthController {
           userName: registerUserRes.response.userName,
           hashPassword: registerUserRes.response.password,
         });
-        delete registerUserRes.response.password;
-        req.session.jwt = jwt;
+
+        if (registerUserRes.response.password)
+          delete registerUserRes.response.password;
+        req.session = { jwt };
       }
 
       res.json(registerUserRes);
