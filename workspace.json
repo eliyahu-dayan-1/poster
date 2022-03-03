@@ -6,6 +6,7 @@
     "express-api": "libs/express-api",
     "logger-service": "libs/logger-service",
     "posts": "apps/posts",
-    "users": "apps/users"
+    "users": "apps/users",
+    "utils": "libs/utils"
   }
 }
