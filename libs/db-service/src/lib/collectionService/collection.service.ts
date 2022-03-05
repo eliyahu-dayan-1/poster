@@ -1,112 +1,155 @@
 import { ObjectId } from 'mongodb';
 import { DbService } from '../dbService';
 import { Logger } from '@poster/logger-service';
-import BaseCollectionServiceRes from '../interfaces/message-contracts/BaseCollectionServiceRes';
-import { BaseError } from '../interfaces/data-contracts/BaseError';
+import BaseRes from '../interfaces/message-contracts/BaseRes';
 import { ERROR_CODES } from '../interfaces/data-contracts/ERROR_CODES_ENUM';
+import { getBaseErrorResByErrorCode } from '../interfaces/services/error';
 
-interface Constractor {
-  collectionName: string;
-  dbName: string;
-  dbURL: string;
-  logger?: Console | Logger;
-}
 class CollectionService {
   constructor({
     collectionName,
     dbName,
     dbURL,
     logger = console,
-  }: Constractor) {
+  }: CollectionConstractor) {
     this.collectionName = collectionName;
-    this.dbName = dbName;
     this.dbService = new DbService({ dbName, dbURL });
     this.logger = logger;
   }
   logger: Console | Logger;
   collectionName: string;
-  dbName: string;
   dbService: DbService;
   query = async (
-    filterBy: { [key: string]: any } = {}
-  ): Promise<BaseCollectionServiceRes> => {
-    const collection = await this.dbService.getCollection(this.collectionName);
-    let isQuerySuccess = false;
-    let findRes: Array<any> = [];
+    filterBy: { [key: string]: string | object | number } = {}
+  ): Promise<BaseRes> => {
+    const collectionRes = await this.dbService.getCollection(
+      this.collectionName
+    );
+    let errorCode = ERROR_CODES.OperationFailed;
+    let findRes: Array<string | object | number> = [];
 
-    if (collection) {
+    if (collectionRes.success && collectionRes.response) {
       try {
-        findRes = await collection.find(filterBy).toArray();
-        isQuerySuccess = true;
+        findRes = await collectionRes.response.find(filterBy).toArray();
+        errorCode = ERROR_CODES.OperationCompletedSuccessfully;
       } catch (err) {
-        this.logger.error('ERROR: cannot find posts');
-        isQuerySuccess = false;
+        this.logger.error('ERROR: cannot find query');
+        this.logger.error(err);
+        errorCode = ERROR_CODES.OperationFailed;
       }
     }
 
-    return new BaseCollectionServiceRes({
-      success: isQuerySuccess,
+    return new BaseRes({
       response: findRes,
-      error: new BaseError({
-        ErrorMessage: '',
-        DisplayErrorMessage: '',
-        UniqueErrorCode: ERROR_CODES.OperationCompletedSuccessfully,
-      }),
+      ...getBaseErrorResByErrorCode(errorCode),
     });
   };
 
-  getById = async (id: string): Promise<BaseCollectionServiceRes> => {
-    const collection = await this.dbService.getCollection(this.collectionName);
-    if (collection) {
+  getById = async (id: string): Promise<BaseRes> => {
+    const collectionRes = await this.dbService.getCollection(
+      this.collectionName
+    );
+    let errorCode = ERROR_CODES.OperationFailed;
+    let getByIdRes: any = null;
+
+    if (collectionRes.success && collectionRes.response) {
       try {
-        const post = await collection.findOne({ _id: new ObjectId(id) });
-
-        return post;
+        getByIdRes = await collectionRes.response.findOne({ _id: new ObjectId(id) });
+        errorCode = ERROR_CODES.OperationCompletedSuccessfully;
       } catch (err) {
-        this.logger.error(`ERROR: while finding post ${id}`);
-        throw err;
-      }
-    }
-  };
-
-  remove = async (id: string): Promise<BaseCollectionServiceRes> => {
-    const collection = await this.dbService.getCollection(this.collectionName);
-    if (collection) {
-      try {
-        await collection.deleteOne({ _id: new ObjectId(id) });
-      } catch (err) {
-        this.logger.error(`ERROR: cannot remove post ${id}`);
-        throw err;
-      }
-    }
-  };
-
-  update = async (data: any, id: string): Promise<BaseCollectionServiceRes> => {
-    const collection = await this.dbService.getCollection(this.collectionName);
-    if (collection) {
-      try {
-        await collection.replaceOne({ _id: new ObjectId(id) }, { $set: data });
-
-        return data;
-      } catch (err) {
-        this.logger.error(`ERROR: cannot update post ${id}`);
+        this.logger.error(`ERROR: while finding by ${id}`);
         this.logger.error(err);
-        throw err;
+        errorCode = ERROR_CODES.OperationFailed;
       }
     }
+
+    return new BaseRes({
+      response: getByIdRes,
+      ...getBaseErrorResByErrorCode(errorCode),
+    });
   };
-  add = async (data: any): Promise<BaseCollectionServiceRes> => {
-    const collection = await this.dbService.getCollection(this.collectionName);
-    if (collection) {
+
+  removeById = async (id: string): Promise<BaseRes> => {
+    const collectionRes = await this.dbService.getCollection(
+      this.collectionName
+    );
+    let errorCode = ERROR_CODES.OperationFailed;
+    let removeRes: any = null;
+    if (collectionRes.success && collectionRes.response) {
       try {
-        await collection.insertOne(data);
-        return data;
+        removeRes = await collectionRes.response.deleteOne({
+          _id: new ObjectId(id),
+        });
+        errorCode = ERROR_CODES.OperationCompletedSuccessfully;
+      } catch (err) {
+        this.logger.error(`ERROR: cannot remove by id ${id}`);
+        this.logger.error(err);
+        errorCode = ERROR_CODES.OperationFailed;
+      }
+    }
+
+    return new BaseRes({
+      response: removeRes,
+      ...getBaseErrorResByErrorCode(errorCode),
+    });
+  };
+
+  updateById = async (data: any, id: string): Promise<BaseRes> => {
+    const collectionRes = await this.dbService.getCollection(
+      this.collectionName
+    );
+    let errorCode = ERROR_CODES.OperationFailed;
+    let updateRes: any = null;
+    if (collectionRes.success && collectionRes.response) {
+      try {
+        updateRes = await collectionRes.response.replaceOne(
+          { _id: new ObjectId(id) },
+          { $set: data }
+        );
+
+        errorCode = ERROR_CODES.OperationCompletedSuccessfully;
+      } catch (err) {
+        this.logger.error(`ERROR: cannot update by id ${id}`);
+        this.logger.error(err);
+        errorCode = ERROR_CODES.OperationFailed;
+      }
+    }
+
+    return new BaseRes({
+      response: updateRes,
+      ...getBaseErrorResByErrorCode(errorCode),
+    });
+  };
+  add = async (data: any): Promise<BaseRes> => {
+    const collectionRes = await this.dbService.getCollection(
+      this.collectionName
+    );
+    let errorCode = ERROR_CODES.OperationFailed;
+    let addRes: any = null;
+
+    if (collectionRes.success && collectionRes.response) {
+      try {
+        addRes = await collectionRes.response.insertOne(data);
+        errorCode = ERROR_CODES.OperationCompletedSuccessfully;
       } catch (err) {
         this.logger.error(`ERROR: cannot insert post`);
-        throw err;
+        this.logger.error(err);
+        errorCode = ERROR_CODES.OperationFailed;
       }
     }
+
+    return new BaseRes({
+      response: addRes,
+      ...getBaseErrorResByErrorCode(errorCode),
+    });
   };
 }
 
 export default CollectionService;
+
+interface CollectionConstractor {
+  collectionName: string;
+  dbName: string;
+  dbURL: string;
+  logger?: Console | Logger;
+}

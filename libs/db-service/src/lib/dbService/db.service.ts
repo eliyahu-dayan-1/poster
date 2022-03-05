@@ -1,5 +1,9 @@
 import { Logger } from '@poster/logger-service';
 import { Db, MongoClient, Collection } from 'mongodb';
+import { ERROR_CODES } from '../interfaces/data-contracts/ERROR_CODES_ENUM';
+import ConnectToDbRes from '../interfaces/message-contracts/ConnectToDbRes';
+import GetCollectionRes from '../interfaces/message-contracts/GetCollectionRes';
+import { getBaseErrorResByErrorCode } from '../interfaces/services/error';
 
 interface Constractor {
   dbName: string;
@@ -14,35 +18,56 @@ class DbService {
   }
   logger: Console | Logger;
   dbURL: string;
-  dbConn: Db | undefined;
+  dbConnection: Db | undefined;
   dbName = '';
-  getCollection = async (
-    collectionName: string
-  ): Promise<undefined | Collection> => {
+  getCollection = async (collectionName: string): Promise<GetCollectionRes> => {
     let collection: undefined | Collection;
+    const connectRes = await this.connectToDB();
+    let errorCode = ERROR_CODES.OperationFailed;
 
-    try {
-      const db = await this.connect();
-      collection = await db.collection(collectionName);
-    } catch (err) {
-      this.logger.error(err);
-      throw err;
+    if (connectRes.success && connectRes.response) {
+      try {
+        collection = connectRes.response.collection(collectionName);
+        errorCode = ERROR_CODES.OperationCompletedSuccessfully;
+      } catch (err) {
+        this.logger.log(
+          `Cannot Connect get collection ${collectionName} in DB ${this.dbName}`
+        );
+        this.logger.error(err);
+        errorCode = ERROR_CODES.OperationFailed;
+      }
+    } else {
+      errorCode = ERROR_CODES.OperationFailed;
     }
 
-    return collection;
+    return new GetCollectionRes({
+      response: collection,
+      ...getBaseErrorResByErrorCode(errorCode),
+    });
   };
 
-  connect = async () => {
-    if (this.dbConn) return this.dbConn;
-    try {
-      const client = await MongoClient.connect(this.dbURL);
-      const db = client.db(this.dbName);
-      this.dbConn = db;
-      return db;
-    } catch (err) {
-      this.logger.log(`Cannot Connect to DB ${err}`);
-      throw err;
+  connectToDB = async (): Promise<ConnectToDbRes> => {
+    const isConnectionExist = !!this.dbConnection;
+    let errorCode = ERROR_CODES.OperationFailed;
+
+    if (isConnectionExist) {
+      errorCode = ERROR_CODES.OperationCompletedSuccessfully;
+    } else {
+      try {
+        const client = await MongoClient.connect(this.dbURL);
+        const db = client.db(this.dbName);
+        this.dbConnection = db;
+        errorCode = ERROR_CODES.OperationCompletedSuccessfully;
+      } catch (err) {
+        this.logger.log(`Cannot Connect to DB ${err}`);
+        errorCode = ERROR_CODES.OperationFailed;
+      }
     }
+
+    return new ConnectToDbRes({
+      response: this.dbConnection,
+      ...getBaseErrorResByErrorCode(errorCode),
+    });
   };
 }
 

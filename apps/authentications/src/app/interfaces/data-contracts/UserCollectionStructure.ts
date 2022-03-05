@@ -1,4 +1,4 @@
-export default interface UserCollectionStructure {
+export default interface UserCollection {
   firstName: string;
   lastName: string;
   userName: string;

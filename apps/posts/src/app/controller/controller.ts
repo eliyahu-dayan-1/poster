@@ -19,7 +19,7 @@ class PostController {
   };
 
   deletePost = async (req: Request, res: Response) => {
-    await postCollection.remove(req.params.id);
+    await postCollection.removeById(req.params.id);
     res.end();
   };
 
@@ -27,7 +27,7 @@ class PostController {
     const post: Post = req.body;
 
     try {
-      await postCollection.update(post, req.params.id);
+      await postCollection.updateById(post, req.params.id);
       res.send(post);
     } catch (err) {
       res.status(500).send(err);

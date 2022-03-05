@@ -1,14 +1,14 @@
 import { postLogger } from './logger.service';
 import config from '../../config';
 import { CollectionService } from '@poster/db-service';
+import { POST_COLLECTIONS } from '../interfaces/data-contracts/COLLECTION_NAMES';
 
-const COLLECTION_NAME = 'posts';
-const DB_NAME = 'poster_posts';
+const POST_DB_NAME = 'poster_posts';
 const dbURL = config.dbURL;
 
 const postCollection = new CollectionService({
-  collectionName: COLLECTION_NAME,
-  dbName: DB_NAME,
+  collectionName: POST_COLLECTIONS.POST,
+  dbName: POST_DB_NAME,
   dbURL: dbURL,
   logger: postLogger,
 });
