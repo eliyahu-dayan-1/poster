@@ -1,46 +1,44 @@
-import { postCollection } from '../services/collections.service';
 import { Request, Response } from 'express';
 import Post from '../interfaces/data-contracts/Post';
+import { postService } from '../services/post';
 
 class PostController {
   getPost = async (req: Request, res: Response) => {
-    const post = await postCollection.getById(req.params.id);
-    res.send(post);
+    const getPostRes = await postService.getPost(req.params.id);
+
+    res.send(getPostRes);
   };
 
-  getPostsByUserId = async (req: Request, res: Response) => {
-    const post = await postCollection.query({ user: req.params.user_id });
-    res.send(post);
+  getPostsByUser = async (req: Request, res: Response) => {
+    const getPostByUserRes = await postService.getPostByUser(
+      req.params.user_id
+    );
+    res.send(getPostByUserRes);
   };
 
   getPosts = async (req: Request, res: Response) => {
-    const posts = await postCollection.query();
-    res.send(posts);
+    const getAllPostsRes = await postService.getAllPosts();
+
+    res.send(getAllPostsRes);
   };
 
   deletePost = async (req: Request, res: Response) => {
-    await postCollection.removeById(req.params.id);
-    res.end();
+    const deletePostRes = await postService.deletePost(req.params.id);
+
+    res.send(deletePostRes);
   };
 
   updatePost = async (req: Request, res: Response) => {
     const post: Post = req.body;
+    const updatePostRes = await postService.updatePost(post, req.params.id);
 
-    try {
-      await postCollection.updateById(post, req.params.id);
-      res.send(post);
-    } catch (err) {
-      res.status(500).send(err);
-    }
+    res.send(updatePostRes);
   };
   addPost = async (req: Request, res: Response) => {
     const post: Post = req.body;
-    try {
-      const addedPost = await postCollection.add(post);
-      res.send(addedPost);
-    } catch (err) {
-      res.status(500).send(err);
-    }
+    const addPostRes = await postService.addPost(post);
+
+    res.send(addPostRes);
   };
 }
 

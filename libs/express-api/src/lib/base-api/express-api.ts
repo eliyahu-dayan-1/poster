@@ -3,6 +3,8 @@ import { json } from 'body-parser';
 import cors from 'cors';
 import express from 'express';
 import cookieSession from 'cookie-session';
+import swaggerUi from 'swagger-ui-express';
+import swaggerDocument from '../../../swagger.json';
 
 interface Constractor {
   defaultPort: number;
@@ -47,6 +49,12 @@ class BaseExpressAPI {
     }
 
     this.app.use(apiUrl, router);
+
+    this.app.use(
+      '/api-docs',
+      swaggerUi.serve,
+      swaggerUi.setup(swaggerDocument)
+    );
     const server = this.app.listen(port, () => {
       logger.log(`Listening at http://localhost:${port}/api`);
     });
