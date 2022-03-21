@@ -42,4 +42,3 @@ Thumbs.db
 apps/**/src/logs/*.log
 apps/**/src/logs/*.log
 apps/**/src/config
-libs/utils

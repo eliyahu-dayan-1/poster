@@ -1,7 +1,7 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "resolveJsonModule": true,                        /* Enable importing .json files */
+    "resolveJsonModule": true,
     "esModuleInterop": true,
     "noImplicitReturns": true,
     "noImplicitAny": true,
