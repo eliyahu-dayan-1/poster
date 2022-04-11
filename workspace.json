@@ -8,6 +8,7 @@
     "posts": "apps/posts",
     "pupepter": "apps/pupepter",
     "selenium": "apps/selenium",
+    "selenium-scrape-scripts": "apps/selenium-scrape-scripts",
     "users": "apps/users"
   }
 }
